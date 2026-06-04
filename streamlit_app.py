@@ -177,23 +177,21 @@ with st.sidebar:
     **ChemLab Mini Tools v2.0**
     
     Platform pembelajaran kimia interaktif dengan:
-    • 🧮 Kalkulator pengenceran
-    • 🎯 Game quiz warna reaksi
-    • 🔧 Troubleshooting praktikum
-    • 🎨 5 tema warna berbeda
+    - Kalkulator pengenceran
+    - Game quiz warna reaksi
+    - Troubleshooting praktikum
+    - 5 tema warna berbeda
     """)
 
 # ==================== DASHBOARD ====================
 if menu == "📊 Dashboard":
     st.title("📊 Dashboard ChemLab")
     
-    # Inisialisasi session state jika belum ada
     if 'total' not in st.session_state:
         st.session_state.total = 0
     if 'skor' not in st.session_state:
         st.session_state.skor = 0
     
-    # Statistik cards
     col1, col2, col3, col4 = st.columns(4)
     
     with col1:
@@ -231,7 +229,6 @@ if menu == "📊 Dashboard":
     
     st.divider()
     
-    # Charts
     col1, col2 = st.columns(2)
     
     with col1:
@@ -247,7 +244,7 @@ if menu == "📊 Dashboard":
             fig.update_layout(height=350, paper_bgcolor=tema_aktif['bg_color'], font=dict(color=tema_aktif['text_color']))
             st.plotly_chart(fig, use_container_width=True)
         else:
-            st.info("📭 Belum ada data quiz!")
+            st.info("Belum ada data quiz!")
     
     with col2:
         st.subheader("🎯 Progress Pembelajaran")
@@ -276,7 +273,7 @@ elif menu == "🏠 Beranda":
     col1, col2, col3 = st.columns(3)
     
     with col1:
-        st.markdown(f"""
+        st.markdown("""
         <div class="metric-card">
             <h3>📊 Kalkulator</h3>
             <p>Hitung pengenceran larutan dengan mudah menggunakan rumus M₁V₁ = M₂V₂</p>
@@ -284,7 +281,7 @@ elif menu == "🏠 Beranda":
         """, unsafe_allow_html=True)
     
     with col2:
-        st.markdown(f"""
+        st.markdown("""
         <div class="metric-card">
             <h3>🎮 Game Quiz</h3>
             <p>Asah pengetahuan dengan tebak warna reaksi dan dapatkan skor</p>
@@ -292,7 +289,7 @@ elif menu == "🏠 Beranda":
         """, unsafe_allow_html=True)
     
     with col3:
-        st.markdown(f"""
+        st.markdown("""
         <div class="metric-card">
             <h3>🧠 Troubleshooting</h3>
             <p>Analisis kesalahan praktikum dan temukan solusinya</p>
@@ -302,12 +299,12 @@ elif menu == "🏠 Beranda":
     st.divider()
     
     st.subheader("🎨 Tema yang Tersedia:")
-    st.markdown(f"""
-    - 💡 **Light** - Terang dan minimalis
-    - 🌙 **Dark** - Gelap untuk mata yang nyaman
-    - 🌊 **Ocean** - Biru seperti laut
-    - 🌲 **Forest** - Hijau alam yang menenangkan
-    - 🌅 **Sunset** - Warna hangat matahari terbenam
+    st.markdown("""
+    - **Light** - Terang dan minimalis
+    - **Dark** - Gelap untuk mata yang nyaman
+    - **Ocean** - Biru seperti laut
+    - **Forest** - Hijau alam yang menenangkan
+    - **Sunset** - Warna hangat matahari terbenam
     
     **Pilih tema favorit Anda di sidebar!**
     """)
@@ -339,109 +336,122 @@ elif menu == "📐 Kalkulator Pengenceran":
                 if hitung_btn:
                     if M2 > 0:
                         V2 = (M1 * V1) / M2
-                        air_ditambahkan = V2 - V1
                         st.markdown(f"""
                         <div class="success-card">
                             <h4>✅ Hasil Perhitungan</h4>
                             <h2>V2 = {V2:.2f} mL</h2>
-                            <p><strong>Arti:</strong> Encerkan {V1:.0f} mL larutan {M1} M dengan air hingga volume menjadi {V2:.2f} mL</p>
-                            <p><strong>Air yang ditambahkan:</strong> {air_ditambahkan:.2f} mL</p>
+                            <p>Air yang ditambahkan: {V2 - V1:.2f} mL</p>
                         </div>
                         """, unsafe_allow_html=True)
                         
-                        # Visualisasi
                         fig = go.Figure()
                         fig.add_trace(go.Bar(
                             x=['Awal', 'Akhir'],
                             y=[V1, V2],
-                            marker=dict(color=[tema_aktif['primary'], tema_aktif['secondary']]),
-                            text=[f'{V1:.0f} mL', f'{V2:.2f} mL'],
-                            textposition='auto',
+                            marker=dict(color=[tema_aktif['primary'], tema_aktif['secondary']])
                         ))
-                        fig.update_layout(
-                            title="Perubahan Volume",
-                            height=300,
-                            paper_bgcolor=tema_aktif['bg_color'],
-                            plot_bgcolor=tema_aktif['card_bg'],
-                            font=dict(color=tema_aktif['text_color'])
-                        )
+                        fig.update_layout(height=300, paper_bgcolor=tema_aktif['bg_color'])
                         st.plotly_chart(fig, use_container_width=True)
                     else:
-                        st.error("❌ M2 tidak boleh nol atau negatif!")
+                        st.error("M2 tidak boleh nol!")
             
-            else:  # Hitung M2
+            else:
                 V2 = st.number_input("Volume Akhir (V2) [mL]", min_value=0.0, value=200.0, step=10.0)
                 hitung_btn = st.button("🔢 Hitung M2", use_container_width=True)
                 
                 if hitung_btn:
                     if V2 > 0:
                         M2 = (M1 * V1) / V2
-                        pengenceran = M1 / M2 if M2 > 0 else 0
                         st.markdown(f"""
                         <div class="success-card">
                             <h4>✅ Hasil Perhitungan</h4>
                             <h2>M2 = {M2:.4f} mol/L</h2>
-                            <p><strong>Arti:</strong> Konsentrasi larutan setelah pengenceran menjadi {M2:.4f} mol/L</p>
-                            <p><strong>Tingkat pengenceran:</strong> {pengenceran:.2f} kali</p>
+                            <p>Tingkat pengenceran: {M1/M2:.2f}x</p>
                         </div>
                         """, unsafe_allow_html=True)
                         
-                        # Visualisasi
                         fig = go.Figure()
                         fig.add_trace(go.Bar(
                             x=['Awal', 'Akhir'],
                             y=[M1, M2],
-                            marker=dict(color=[tema_aktif['primary'], tema_aktif['secondary']]),
-                            text=[f'{M1:.2f} M', f'{M2:.4f} M'],
-                            textposition='auto',
+                            marker=dict(color=[tema_aktif['primary'], tema_aktif['secondary']])
                         ))
-                        fig.update_layout(
-                            title="Perubahan Konsentrasi",
-                            height=300,
-                            paper_bgcolor=tema_aktif['bg_color'],
-                            plot_bgcolor=tema_aktif['card_bg'],
-                            font=dict(color=tema_aktif['text_color'])
-                        )
+                        fig.update_layout(height=300, paper_bgcolor=tema_aktif['bg_color'])
                         st.plotly_chart(fig, use_container_width=True)
                     else:
-                        st.error("❌ V2 tidak boleh nol atau negatif!")
+                        st.error("V2 tidak boleh nol!")
         
         with col2:
-            st.subheader("📐 Rumus & Formula")
+            st.subheader("📐 Rumus")
             st.info("""
-            **Rumus Pengenceran:**
+            **M₁V₁ = M₂V₂**
             
-            M₁V₁ = M₂V₂
-            
-            Keterangan:
-            - M₁ = Konsentrasi awal (mol/L)
-            - V₁ = Volume awal (mL)
-            - M₂ = Konsentrasi akhir (mol/L)
-            - V₂ = Volume akhir (mL)
-            """)
-            
-            st.warning("""
-            **💡 Tips Penting:**
-            - Pastikan satuan volume konsisten
-            - Pengenceran = M berkurang, V bertambah
-            - Jumlah mol zat terlarut tetap sama
+            M1 = Konsentrasi awal
+            V1 = Volume awal
+            M2 = Konsentrasi akhir
+            V2 = Volume akhir
             """)
     
     with tab2:
         st.markdown("""
-        ### 📖 Panduan Pengenceran Larutan
+        ### 📖 Panduan Pengenceran
         
-        **Apa itu pengenceran?**
-        Pengenceran adalah proses menambahkan pelarut (biasanya air) ke dalam larutan untuk menurunkan konsentrasinya.
+        Pengenceran = menambahkan pelarut untuk menurunkan konsentrasi.
         
-        **Langkah-langkah praktis:**
-        1. Hitung berapa banyak larutan pekat yang dibutuhkan
-        2. Hitung berapa banyak pelarut (air) yang ditambahkan
-        3. Campurkan perlahan sambil diaduk
-        4. Biarkan sebentar agar merata
-        
-        **Contoh soal:**
-        - Anda punya 100 mL larutan HCl 2 M
-        - Ingin membuat larutan HCl 0.5 M
-        - Berapa volume akhir yang dihasilkan?
-        - **Jawab:** V₂ =
+        **Contoh:**
+        - 100 mL HCl 2M → HCl 0.5M
+        - V2 = (2 × 100) / 0.5 = 400 mL
+        """)
+    
+    with tab3:
+        st.info("Riwayat akan ditampilkan di sini")
+
+# ==================== QUIZ WARNA REAKSI ====================
+elif menu == "🎮 Tebak Warna Reaksi":
+    st.header("🎮 Tebak Warna Reaksi - Game Quiz")
+    
+    if 'skor' not in st.session_state:
+        st.session_state.skor = 0
+        st.session_state.total = 0
+    
+    soal_list = [
+        {
+            "pertanyaan": "KMnO4 + Fe²⁺ → warna apa?",
+            "pilihan": ["Ungu", "Bening", "Coklat", "Hijau"],
+            "jawaban": "Bening",
+            "penjelasan": "KMnO4 (ungu) tereduksi menjadi Mn²⁺ (tidak berwarna)"
+        },
+        {
+            "pertanyaan": "Ag⁺ + Cl⁻ → endapan warna?",
+            "pilihan": ["Putih", "Kuning", "Biru", "Merah"],
+            "jawaban": "Putih",
+            "penjelasan": "AgCl membentuk endapan putih"
+        },
+        {
+            "pertanyaan": "I₂ dalam larutan → warna?",
+            "pilihan": ["Merah", "Coklat", "Ungu", "Hijau"],
+            "jawaban": "Coklat",
+            "penjelasan": "Iodium berwarna coklat kemerahan"
+        },
+        {
+            "pertanyaan": "CuSO4 + NaOH → endapan?",
+            "pilihan": ["Putih", "Biru", "Merah", "Kuning"],
+            "jawaban": "Biru",
+            "penjelasan": "Cu(OH)₂ membentuk endapan biru"
+        },
+        {
+            "pertanyaan": "Fe³⁺ + SCN⁻ → warna?",
+            "pilihan": ["Biru", "Merah", "Hijau", "Kuning"],
+            "jawaban": "Merah",
+            "penjelasan": "Kompleks Fe(SCN)²⁺ berwarna merah darah"
+        }
+    ]
+    
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        st.metric("Skor", st.session_state.skor)
+    with col2:
+        st.metric("Total", st.session_state.total)
+    with col3:
+        if st.session_state.total > 0:
+            st
